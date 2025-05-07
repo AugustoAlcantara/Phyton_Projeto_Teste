@@ -1,4 +1,4 @@
-async def fib_async(n: int) -> int:
+async def calculoFib(n: int) -> int:
     if n < 2:
         return n
     a, b = 0, 1

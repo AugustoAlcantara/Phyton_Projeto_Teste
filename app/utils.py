@@ -5,22 +5,22 @@ from typing import List
 from datetime import datetime, timezone
 from pydantic import BaseModel
 
-class FibonacciRequest(BaseModel):
+class CalculoFibonacci(BaseModel):
     command: str
     value: int
 
-class ConnectionManager:
+class GestorDeConecxao:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket):
+    async def conectar(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
+    def desconectar(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def broadcast_time(self):
+    async def transmitir_horario(self):
         while True:
             now = datetime.now(timezone.utc).isoformat()
             for conn in list(self.active_connections):
