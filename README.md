@@ -33,7 +33,7 @@ Requer Python 3.9+ instalado.
 
 ## 🐳 Como rodar com Docker
 
-após clonar o repositório, execute o seguinte comando no terminal na pasta do projeto:
+Após clonar o repositório, execute o seguinte comando no terminal na pasta do projeto:
 
 1. **Criação da imagem:**	
 docker build -t websocket-fastapi-app .
