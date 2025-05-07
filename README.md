@@ -3,7 +3,7 @@
 ## Como rodar o projeto
 
 1. Clone o repositório:
-   git clone https://github.com/seuusuario/websocket-server.git
+   git clone https://github.com/AugustoAlcantara/Phyton_Projeto_Teste.git
 
 
 2. Instale as dependências:
