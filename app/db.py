@@ -1,16 +1,15 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, select
-from datetime import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
 
 class ConnectedUser(Base):
-    __tablename__ = 'connected_users'
+    __tablename__ = 'Usuarios'
     id = Column(Integer, primary_key=True, index=True)
     address = Column(String, unique=True, index=True)
-    connected_at = Column(DateTime, default=lambda: datetime.now(datetime.timezone.utc))
-
+    connected_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 class Database:
     def __init__(self, url: str):
         self.engine = create_async_engine(url, echo=False)
@@ -24,9 +23,15 @@ class Database:
 
     async def add_user(self, address: str):
         async with self.SessionLocal() as session:
-            user = ConnectedUser(address=address)
-            session.add(user)
-            await session.commit()
+            # Verifica se o usuário já está registrado
+            result = await session.execute(
+                select(ConnectedUser).where(ConnectedUser.address == address)
+            )
+            existing_user = result.scalars().first()
+            if not existing_user:
+                user = ConnectedUser(address=address)
+                session.add(user)
+                await session.commit()
 
     async def remove_user(self, address: str):
         async with self.SessionLocal() as session:

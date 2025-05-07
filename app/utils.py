@@ -1,7 +1,8 @@
+import asyncio
 import json
 from fastapi import WebSocket
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 
 class FibonacciRequest(BaseModel):
@@ -21,9 +22,12 @@ class ConnectionManager:
 
     async def broadcast_time(self):
         while True:
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
             for conn in list(self.active_connections):
-                await conn.send_text(json.dumps({"datetime": now}))
+                try:
+                    await conn.send_text(json.dumps({"datetime": now}))
+                except Exception:
+                    self.disconnect(conn)
             await asyncio.sleep(1)
 
 def JSONResponse(result: int) -> str:
