@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Client</title>
+</head>
+<body>
+  <h2>WebSocket Client</h2>
+  <input id="fibValue" type="number" placeholder="Digite n para Fibonacci" />
+  <button onclick="sendFibonacci()">Enviar Fibonacci</button>
+  <div>##################################### </div>
+  <div>
+    <button onclick="conectarWebSocket()">Conectar</button>
+    <button onclick="desconectarWebSocket()">Desconectar</button>
+    <button onclick="limpar()">Limpar log</button>
+  </div>
+  <pre id="output"></pre>
+
+  <script>
+    let socket = null;
+  
+    const MsgConectado = [
+    "🟢 Conectado com sucesso! 🚀✨",
+    "🔌 Conexão estabelecida! 🧠💥",
+    "✅ Tudo certo! Está online. 🌐😎",
+    "🔗 Ja estou conectado... mas se insistir, eu desconecto!!",
+    "🎉 Link com o servidor ativo! 📡🔥"
+    ];
+    let iContMsgConectado = 0;
+
+    const MsgDesconectado = [
+    "🔴 Desconectado. 😢",  
+    "❌ Mais desconectado do que isso, impossível! 🫥📴",
+    "📴 Já foi!!. 😴💤",
+    "🔌 Eitaa, Ja desconectamos. 😢",
+    "🏃‍♂️ Ta bom... eu entendi! 🏝️😭"
+    ];
+    let iContMsgDeconectado = 0;
+
+    const MsgJaConectado = [
+    "📶 Conexão já está ativa. 🛜🎯",
+    "🤷‍♂️ Se eu conectar mais, viro um MEGAZORD 😆",
+    "🙅‍♂️ Não precisa conectar de novo! 🔁🚫",
+    "😅 Já estamos online, lembra? 🧠💾",
+    "🧐 Não é possiel... deve ter clicado errado..  🧻🚪"
+    ];
+    let iContMsgJaConectado = 0;
+
+    const MsgJaDeconectado = [
+    "📴 Já estamos desconectados! 💤",
+    "😑 Não dá pra desligar o que já está desligado. 🪫",
+    "🔕 E se... no proximo click eu desligar o PC??. 🙈",
+    "🙄 Você já abandonou o servidor. 🏃‍♀️💨"
+    ];
+    let iContMsgJaDeconectado = 0;
+
+    function limpar() {
+      document.getElementById("output").textContent = "";
+    }
+
+    function log(msg) {
+      document.getElementById("output").textContent += msg + "\n";
+    }
+  
+    function conectarWebSocket() {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        log(MsgJaConectado[iContMsgJaConectado]);
+        iContMsgJaConectado = (iContMsgJaConectado + 1) % MsgJaConectado.length;
+        return;
+      }
+  
+      socket = new WebSocket("ws://localhost:8000/ws");
+  
+      socket.onopen = () => {
+        log(MsgConectado[iContMsgConectado]);
+        iContMsgConectado = (iContMsgConectado + 1) % MsgConectado.length;
+      };
+  
+      socket.onmessage = (event) => {
+        log("Servidor: " + event.data);
+      };
+  
+      socket.onclose = () => {
+        log("Conexão encerrada.");
+      };
+  
+      socket.onerror = (error) => {
+        log("Erro na conexão WebSocket.");
+        console.error(error);
+      };
+    }
+  
+    function desconectarWebSocket() {
+      if (!socket || socket.readyState === WebSocket.CLOSED) {
+        log(MsgJaDeconectado[iContMsgJaDeconectado]);
+        iContMsgJaDeconectado = (iContMsgJaDeconectado + 1) % MsgJaDeconectado.length;
+        return;
+      }
+  
+      socket.close();
+      log(MsgDesconectado[iContMsgDeconectado]);
+      iContMsgDeconectado = (iContMsgDeconectado + 1) % MsgDesconectado.length;
+    }
+  
+    function sendFibonacci() {
+      const value = parseInt(document.getElementById("fibValue").value || "10");
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ command: "fibonacci", value }));
+      } else {
+        log("Conecte-se antes de enviar.");
+      }
+    }
+  </script>
+      
+</body>
+</html>
