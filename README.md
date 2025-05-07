@@ -19,7 +19,7 @@ que presta assistência avançada de codificação.
 
 ## ⚙️ Como rodar o projeto (SEM Docker)
 
-> Requer Python 3.9+ instalado.
+Requer Python 3.9+ instalado.
 
 1. **Clone o repositório informado:**
    cd Phyton_Projeto_Teste
